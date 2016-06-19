@@ -10,7 +10,7 @@ BBC_FEEDS = {'bbc': 'http://feeds.bbci.co.uk/news/rss.xml',
 	     'iol': 'http://www.iol.co.za/cmlink/1.640' }
 
 @app.route("/")
-@app.route("/bcc")
+@app.route("/bbc")
 def bbc():
 	return get_news('bbc')
 
