@@ -30,7 +30,7 @@ def get_news(publication):
 	feed = feedparser.parse(BBC_FEEDS[publication])
 	first_article = feed['entries'][0]
 
-	return "<html>
+	return """<html>
 		<body>
 		<h1> BBC headlines </h1>
 		<b>{0}</b><br/>
