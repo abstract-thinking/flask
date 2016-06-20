@@ -3,9 +3,12 @@
 		<title>Headlines</title>
 	</head>
 	<body>
+	{% for article in articles %}
 		<h1>Headlines</h1>
-		<b>{{title}}</b><br/>
-		<i>{{published}}</i><br/>
-		<p>{{summary}}</p>
+		<b>{{article.title}}</b><br/>
+		<i>{{article.published}}</i><br/>
+		<p>{{article.summary}}</p>
+		<hr/>
+	{% endfor %}
 	</body>
 </html>

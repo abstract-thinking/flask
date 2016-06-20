@@ -29,12 +29,7 @@ def iol():
 
 def get_news(publication):
 	feed = feedparser.parse(BBC_FEEDS[publication])
-	first_article = feed['entries'][0]
-
-	return render_template("home.html",
-		title=first_article.get("title"),
-		published=first_article.get("published"),
-		summary=first_article.get("summary"))
+	return render_template("home.html", articles=feed['entries'])
 
 if __name__ == '__main__':
 	app.run(port=5000, debug=True)
