@@ -3,8 +3,8 @@
 		<title>Headlines</title>
 	</head>
 	<body>
+	<h1>Headlines</h1>
 	{% for article in articles %}
-		<h1>Headlines</h1>
 		<b><a href="{{article.link}}">{{article.title}}</a></b><br/>
 		<i>{{article.published}}</i><br/>
 		<p>{{article.summary}}</p>
