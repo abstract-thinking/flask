@@ -27,7 +27,7 @@ CURRENCY_URL = "https://openexchangerates.org/api/latest.json?app_id={}"
 
 @app.route("/")
 def home():
-	api_keys = read_keys()
+	api_keys = read_api_keys()
 
 	publication = request.args.get('publication')
 	if not publication:
@@ -44,7 +44,7 @@ def home():
 		currency_from = DEFAULTS['currency_from']
 	currency_to = request.args.get('currency_to')
 	if not currency_to:
-		currency_to = DEFAULTS['currencty_to']
+		currency_to = DEFAULTS['currency_to']
 	rate = get_rate(currency_from, currency_to, api_keys['currency'])
 	
 	return render_template("home.html",
@@ -91,9 +91,9 @@ def read_api_keys():
 	abs_file_path = os.path.join(script_dir, "weather.txt")
 	d = {}
 	with open(abs_file_path) as f:
-    	for line in f:
-       		(key, val) = line.split()
-       		d[key] = val.strip()
+		for line in f:
+			(key, val) = line.split()
+			d[key] = val.strip()
 	return d
 
 if __name__ == '__main__':
