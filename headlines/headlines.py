@@ -79,8 +79,8 @@ def get_weather(query, weather_api_key):
 
 
 def get_rate(frm, to, currency_api_key):
-	all_currency = urllib2.urlopen(CURRENCY_URL.format(currency_api_key).read()
-
+	all_currency = urllib2.urlopen(CURRENCY_URL.format(currency_api_key)).read()
+	
 	parsed = json.loads(all_currency).get('rates')
 	frm_rate = parsed.get(frm.upper())
 	to_rate = parsed.get(to.upper())
