@@ -14,7 +14,7 @@ DB = DBHelper()
 
 @app.route("/")
 def home():
-	crimes = DB_get_all_crimes()
+	crimes = DB.get_all_crimes()
 	crimes = json.dumps(crimes)
 	return render_template("home.html", crimes=crimes)
 
@@ -35,7 +35,7 @@ def clear():
 		print e
 	return home()
 
-@app.route("/submitcrime")
+@app.route("/submitcrime", methods=['POST'])
 def submitcrime():
 	category = request.form.get("category")
 	date = request.form.get("date")

@@ -40,10 +40,10 @@ class DBHelper:
 		finally:
 			connection.close()
 
-	def add_crime(self):
+	def add_crime(self, category, date, latitude, longitude, description):
 		connection = self.connect()
 		try:
-			query = "INSERT INFO crimes (category, date, latitude, longitude, description)\
+			query = "INSERT INTO crimes (category, date, latitude, longitude, description)\
 				VALUES (%s, %s, %s, %s, %s)"
 			with connection.cursor() as cursor:
 				cursor.execute(query, (category, date, latitude, longitude, description))
@@ -53,7 +53,7 @@ class DBHelper:
 		finally:
 			connection.close()
 
-	def get_all_crime(self):
+	def get_all_crimes(self):
 		connection = self.connect()
 		try:
 			query = "SELECT latitude, longitude, date, category, description FROM crimes"
@@ -62,7 +62,7 @@ class DBHelper:
 				named_crimes = []
 				for crime in cursor:
 					named_crime = {
-						'latitute': crime[0],
+						'latitude': crime[0],
 						'longitude': crime[1],
 						'date': datetime.datetime.strftime(crime[2], '%Y-%m-%d'),
 						'category': crime[3],
