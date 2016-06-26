@@ -12,8 +12,16 @@ input, select, textarea {
   width: 100%;
 }
 
+input[type="submit"] {
+  padding: 5px 10px 5px 10px;
+  color: black;
+  background: lightsteelblue;
+  border: none;
+  box-shadow: 1px 1px 1px #4C6E91;
+}
+
 input[type="submit"]:hover {
-  background:steelblue;
+  background: steelblue;
 }
 
 #map-canvas {
@@ -22,7 +30,7 @@ input[type="submit"]:hover {
   float: left;
 }
 
-#newcrimeform {
+#newcrimefrom {
   float: right;
   width: 25%;
 }
