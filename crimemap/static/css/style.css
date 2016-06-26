@@ -1,0 +1,28 @@
+body {
+  font-family: sans-serif;
+  background: #eee
+}
+
+input, select, textarea {
+  display: block;
+  color: grey;
+  border: 1px solid lightsteelblue;
+  line-height: 15px;
+  margin: 2px 6px 16px 0px;
+  width: 100%;
+}
+
+input[type="submit"]:hover {
+  background:steelblue;
+}
+
+#map-canvas {
+  width: 70%;
+  height: 500px;
+  float: left;
+}
+
+#newcrimeform {
+  float: right;
+  width: 25%;
+}
