@@ -7,6 +7,7 @@ if dbconfig.test:
 else:
 	from dbhelper import DBHelper
 import json
+import string
 
 from flask import Flask
 from flask import render_template
