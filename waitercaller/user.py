@@ -11,5 +11,5 @@ class User:
 	def is_anonymous(self):
 		return False
 
-	def is_authentiated(self):
+	def is_authenticated(self):
 		return True
