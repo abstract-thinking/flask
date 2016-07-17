@@ -8,10 +8,15 @@ from flask.ext.login import LoginManager
 from flask.ext.login import login_required
 from flask.ext.login import login_user
 from flask.ext.login import logout_user
+from flask.ext.login import current_user
+
+import config
+import datetime
 
 from mockdbhelper import MockDBHelper as DBHelper
 from user import User
 from passwordhelper import PasswordHelper
+from bitlyhelper import BitlyHelper
 
 app = Flask(__name__)
 app.secret_key = '18PWHwFrq2xEZXI8JN4tPdsZD0X1BInNmxzWSKLQVImD1mesJx1ykv3e1yhC6N7BZEr914Nre0Sbi0HppeJsd3oSJtcZ1jP4gvy'
@@ -20,6 +25,7 @@ login_manager = LoginManager(app)
 
 DB = DBHelper()
 PH = PasswordHelper()
+BH = BitlyHelper()
 
 @app.route("/")
 def home():
@@ -58,13 +64,42 @@ def register():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-	return render_template("dashboard.html")
+	now = datetime.datetime.now()
+	requests = DB.get_requests(current_user.get_id())
+	for req in requests:
+		deltaseconds = (now - req['time']).seconds
+		req['wait_minutes'] = "{}.{}".format((deltaseconds/60), str(deltaseconds % 60).zfill(2))
+	return render_template("dashboard.html", requests=requests)
+
+@app.route("/dashboard/resolve")
+@login_required
+def dashboard_resolve():
+	request_id = request.args.get("request_id")
+	DB.delete_request(request_id)
+	return redirect(url_for('dashboard'))
 
 
 @app.route("/account")
 @login_required
 def account():
+	tables = DB.get_tables(current_user.get_id())
 	return render_template("account.html")
+
+@app.route("/account/createtable", methods=["POST"])
+@login_required
+def account_createtable():
+	tablename = request.form.get("tablenumber")
+	tableid = DB.add_table(tablename, current_user.get_id())
+	new_url = BH.shorten_url(config.base_url + "newrequest/" + tableid)
+	DB.update_table(tableid, new_url)
+	return redirect(url_for('account'))
+
+@app.route("/account/deletetable")
+@login_required
+def account_deletetable():
+	tableid = request.args.get("tableid")
+	DB.delete_table(tableid)
+	return redirect(url_for('account'))
 
 
 @login_manager.user_loader
@@ -73,6 +108,10 @@ def load_user(user_id):
 	if user_password:
 		return User(user_id)
 
+@app.route("/newrequest/<tid>")
+def new_request(tid):
+	DB.add_request(tid, datetime.datetime.now())
+	return "Your request has been logged and a waiter will be with you shortly"
 
 if __name__ == '__main__':
 	app.run(port=5000, debug=True)
