@@ -20,6 +20,7 @@ from bitlyhelper import BitlyHelper
 
 from forms import RegistrationForm
 from forms import LoginForm
+from forms import CreateTableForm
 
 app = Flask(__name__)
 app.secret_key = '18PWHwFrq2xEZXI8JN4tPdsZD0X1BInNmxzWSKLQVImD1mesJx1ykv3e1yhC6N7BZEr914Nre0Sbi0HppeJsd3oSJtcZ1jP4gvy'
@@ -88,16 +89,21 @@ def dashboard_resolve():
 @login_required
 def account():
 	tables = DB.get_tables(current_user.get_id())
-	return render_template("account.html")
+	return render_template("account.html",
+		createtableform=CreateTableForm(), tables=tables)
 
 @app.route("/account/createtable", methods=["POST"])
 @login_required
 def account_createtable():
-	tablename = request.form.get("tablenumber")
-	tableid = DB.add_table(tablename, current_user.get_id())
-	new_url = BH.shorten_url(config.base_url + "newrequest/" + tableid)
-	DB.update_table(tableid, new_url)
-	return redirect(url_for('account'))
+	form = CrateTableForm(request.form)
+	if form.validate():
+		tableid = DB.add_table(tablename, current_user.get_id())
+		new_url = BH.shorten_url(config.base_url + "newrequest/" + tableid)
+		DB.update_table(tableid, new_url)
+		return redirect(url_for('account'))
+	
+	return render_template("account.html", createtableform=form,
+		tables=DB.get_tables(current_user.get_id())
 
 @app.route("/account/deletetable")
 @login_required
