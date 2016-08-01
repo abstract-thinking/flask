@@ -14,3 +14,10 @@ class RegistrationForm(Form):
 		validators=[validators.DataRequired(), validators.EqualTo('password',
 		message="Passwords must match")])
 	submit = SubmitField('submit', [validators.DataRequired()])
+
+class LoginForm(Form):
+	loginemail = EmailField('email', 
+		validators=[validators.DataRequired(), validators.Email()])
+	loginpassword = PasswordField('password',
+		validators=[validators.DataRequired(message="Password field is required")]]
+	submit = SubmitField('submit', [validators.DataRequired()])	

@@ -19,7 +19,7 @@ from passwordhelper import PasswordHelper
 from bitlyhelper import BitlyHelper
 
 from forms import RegistrationForm
-
+from forms import LoginForm
 
 app = Flask(__name__)
 app.secret_key = '18PWHwFrq2xEZXI8JN4tPdsZD0X1BInNmxzWSKLQVImD1mesJx1ykv3e1yhC6N7BZEr914Nre0Sbi0HppeJsd3oSJtcZ1jP4gvy'
@@ -32,19 +32,19 @@ BH = BitlyHelper()
 
 @app.route("/")
 def home():
-	registrationform = RegistrationForm()
-	return render_template("home.html", registrationform=registrationform)
+	return render_template("home.html", loginfrom=LoginForm(), registrationform=RegistrationForm())
 
 @app.route("/login", methods=["POST"])
 def login():
-	email = request.form.get("email")
-	password = request.form.get("password")
-	stored_user = DB.get_user(email)
-	if stored_user and PH.validate_password(password, stored_user['salt'], stored_user['hashed']):
-		user = User(email)
-		login_user(user, remember=True)
-		return redirect(url_for('account'))
-	return home()
+	form = LoginForm(request.form)
+	if form.validate():
+		stored_user = DB.get_user(email)
+		if stored_user and PH.validate_password(password, stored_user['salt'], stored_user['hashed']):
+			user = User(email)
+			login_user(user, remember=True)
+			return redirect(url_for('account'))
+		form.loginemail.errors.append("Email or password invalid")
+	return render_template("home.html", loginform=form, registrationform=RegistrationForm())
 
 @app.route("/logout")
 def logout():
@@ -57,12 +57,14 @@ def register():
 	if form.validate():
 		if DB.get_user(form.email.data):
 			form.email.errors.append("Email address already registered")
-			return render_template('home.html', registrationform=form);
+			return render_template('home.html', loginfrom=LoginForm(), registrationform=form);
 		salt = PH.get_salt()
 		hashed = PH.get_hash(pw1 + salt)
 		DB.add_user(email, salt, hashed)
-		return redirect(url_for('home'))
-	return render_template("home.html", registrationform=form)
+		return redirect('home.html', loginfrom=LoginForm(), registrationform=form,
+			onloadmessage="Registration successful. Please log in."))
+	
+	return render_template("home.html", loginform=LoginForm(), registrationform=form)
 
 @app.route("/dashboard")
 @login_required
