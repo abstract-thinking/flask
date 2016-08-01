@@ -18,6 +18,9 @@ from user import User
 from passwordhelper import PasswordHelper
 from bitlyhelper import BitlyHelper
 
+from forms import RegistrationForm
+
+
 app = Flask(__name__)
 app.secret_key = '18PWHwFrq2xEZXI8JN4tPdsZD0X1BInNmxzWSKLQVImD1mesJx1ykv3e1yhC6N7BZEr914Nre0Sbi0HppeJsd3oSJtcZ1jP4gvy'
 
@@ -29,7 +32,8 @@ BH = BitlyHelper()
 
 @app.route("/")
 def home():
-	return render_template("home.html")
+	registrationform = RegistrationForm()
+	return render_template("home.html", registrationform=registrationform)
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -49,17 +53,16 @@ def logout():
 
 @app.route("/register", methods=["POST"])
 def register():
-	email = request.form.get("email")
-	pw1 = request.form.get("password")
-	pw2 = request.form.get("password2")
-	if not pw1 == pw2:
+	form = RegistrationForm(request.form)
+	if form.validate():
+		if DB.get_user(form.email.data):
+			form.email.errors.append("Email address already registered")
+			return render_template('home.html', registrationform=form);
+		salt = PH.get_salt()
+		hashed = PH.get_hash(pw1 + salt)
+		DB.add_user(email, salt, hashed)
 		return redirect(url_for('home'))
-	if DB.get_user(email):
-		return redirect(url_for('home'))
-	salt = PH.get_salt()
-	hashed = PH.get_hash(pw1 + salt)
-	DB.add_user(email, salt, hashed)
-	return redirect(url_for('home'))
+	return render_template("home.html", registrationform=form)
 
 @app.route("/dashboard")
 @login_required
