@@ -39,9 +39,9 @@ def home():
 def login():
 	form = LoginForm(request.form)
 	if form.validate():
-		stored_user = DB.get_user(email)
-		if stored_user and PH.validate_password(password, stored_user['salt'], stored_user['hashed']):
-			user = User(email)
+		stored_user = DB.get_user(form.loginemail.data)
+		if stored_user and PH.validate_password(form.loginpassword.data, stored_user['salt'], stored_user['hashed']):
+			user = User(form.logiemail.data)
 			login_user(user, remember=True)
 			return redirect(url_for('account'))
 		form.loginemail.errors.append("Email or password invalid")
@@ -61,8 +61,8 @@ def register():
 			return render_template('home.html', loginform=LoginForm(), registrationform=form);
 		salt = PH.get_salt()
 		hashed = PH.get_hash(form.password2.data + salt)
-		DB.add_user(email, salt, hashed)
-		return redirect('home.html', loginform=LoginForm(), registrationform=form,
+		DB.add_user(form.email.data, salt, hashed)
+		return render_template('home.html', loginform=LoginForm(), registrationform=form,
 			onloadmessage="Registration successful. Please log in.")
 	
 	return render_template("home.html", loginform=LoginForm(), registrationform=form)
