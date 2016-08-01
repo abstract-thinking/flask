@@ -33,7 +33,7 @@ BH = BitlyHelper()
 
 @app.route("/")
 def home():
-	return render_template("home.html", loginfrom=LoginForm(), registrationform=RegistrationForm())
+	return render_template("home.html", loginform=LoginForm(), registrationform=RegistrationForm())
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -58,12 +58,12 @@ def register():
 	if form.validate():
 		if DB.get_user(form.email.data):
 			form.email.errors.append("Email address already registered")
-			return render_template('home.html', loginfrom=LoginForm(), registrationform=form);
+			return render_template('home.html', loginform=LoginForm(), registrationform=form);
 		salt = PH.get_salt()
-		hashed = PH.get_hash(pw1 + salt)
+		hashed = PH.get_hash(form.password2.data + salt)
 		DB.add_user(email, salt, hashed)
-		return redirect('home.html', loginfrom=LoginForm(), registrationform=form,
-			onloadmessage="Registration successful. Please log in."))
+		return redirect('home.html', loginform=LoginForm(), registrationform=form,
+			onloadmessage="Registration successful. Please log in.")
 	
 	return render_template("home.html", loginform=LoginForm(), registrationform=form)
 
@@ -103,7 +103,7 @@ def account_createtable():
 		return redirect(url_for('account'))
 	
 	return render_template("account.html", createtableform=form,
-		tables=DB.get_tables(current_user.get_id())
+		tables=DB.get_tables(current_user.get_id()))
 
 @app.route("/account/deletetable")
 @login_required
